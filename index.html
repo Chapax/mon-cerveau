@@ -13,627 +13,470 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0a0f;
-      --bg2: #12121f;
-      --card: rgba(255,255,255,0.03);
-      --card-hover: rgba(255,255,255,0.05);
-      --border: rgba(255,255,255,0.06);
-      --border-hover: rgba(255,255,255,0.12);
-      --text: #e0e0e0;
-      --text-dim: #888;
-      --text-muted: #555;
-      --text-dark: #444;
-      --purple: #8b5cf6;
-      --purple-light: #c4b5fd;
-      --purple-dark: #7c3aed;
-      --purple-glow: rgba(139,92,246,0.15);
-      --red: #ff4757;
-      --orange: #ffa502;
-      --green: #2ed573;
-      --yellow: #fbbf24;
-      --emerald: #34d399;
-      --blue: #60a5fa;
-      --blue-light: #93c5fd;
-      --pink: #f472b6;
-      --violet: #a78bfa;
-      --tomato: #ef4444;
+      --bg:#0a0a0f;--bg2:#12121f;--card:rgba(255,255,255,0.03);
+      --card-hover:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.06);
+      --border-hover:rgba(255,255,255,0.12);--text:#e0e0e0;--muted:#555;
+      --purple:#8b5cf6;--purple-light:#c4b5fd;--purple-dark:#7c3aed;
+      --q1:#ef4444;--q2:#f59e0b;--q3:#3b82f6;--q4:#6b7280;
+      --green:#34d399;--pink:#f472b6;--violet:#a78bfa;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; overflow: hidden; }
-    
-    body {
-      background: linear-gradient(160deg, var(--bg) 0%, var(--bg2) 40%, #0d1117 100%);
-      color: var(--text);
-      font-family: 'JetBrains Mono', 'Fira Code', monospace;
-      position: relative;
-    }
-
-    #app {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .grid-bg {
-      position: fixed; inset: 0; opacity: 0.03; pointer-events: none;
-      background-image: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
-      background-size: 40px 40px;
-      z-index: 0;
-    }
-
-    .scroll-area {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      padding: 20px 16px 24px;
-      max-width: 520px;
-      margin: 0 auto;
-      width: 100%;
-      position: relative;
-      z-index: 1;
-    }
-
-    .scroll-area::-webkit-scrollbar { width: 4px; }
-    .scroll-area::-webkit-scrollbar-track { background: transparent; }
-    .scroll-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
-
-    /* ─── COMPONENTS ─── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-      transition: all 0.2s ease;
-    }
-    .card:hover { border-color: var(--border-hover); background: var(--card-hover); }
-
-    .input {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
-      color: var(--text);
-      padding: 12px 16px;
-      font-size: 14px;
-      font-family: inherit;
-      outline: none;
-      width: 100%;
-      transition: all 0.2s ease;
-    }
-    .input:focus { border-color: rgba(139,92,246,0.5); box-shadow: 0 0 0 3px rgba(139,92,246,0.1); }
-    .input::placeholder { color: rgba(255,255,255,0.2); }
-    textarea.input { resize: vertical; min-height: 60px; }
-
-    .btn {
-      background: linear-gradient(135deg, var(--purple), var(--purple-dark));
-      border: none; color: white;
-      padding: 10px 20px; border-radius: 10px;
-      font-family: inherit; font-size: 13px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
-    }
-    .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(139,92,246,0.3); }
-    .btn:active { transform: translateY(0); }
-
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #999; padding: 6px 12px; border-radius: 8px;
-      font-family: inherit; font-size: 12px;
-      cursor: pointer; transition: all 0.15s ease;
-    }
-    .btn-ghost:hover { background: rgba(255,255,255,0.05); color: var(--text); }
-
-    .icon-btn {
-      background: none; border: none; cursor: pointer; font-size: 16px;
-      opacity: 0.4; transition: all 0.15s; padding: 4px;
-    }
-    .icon-btn:hover { opacity: 1; transform: scale(1.2); }
-
-    .tag {
-      font-size: 10px; font-weight: 600;
-      padding: 3px 10px; border-radius: 20px;
-      letter-spacing: 0.5px; text-transform: uppercase;
-    }
-
-    /* ─── TABS ─── */
-    .bottom-nav {
-      background: rgba(10,10,15,0.95);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid var(--border);
-      padding: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
-      display: flex; justify-content: center; gap: 8px;
-      z-index: 50; flex-shrink: 0;
-    }
-    .tab {
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      padding: 10px 16px; border-radius: 12px; cursor: pointer;
-      border: none; background: transparent; color: var(--text-muted);
-      font-family: inherit; font-size: 10px; font-weight: 500;
-      letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.2s;
-    }
-    .tab.active { background: var(--purple-glow); color: var(--purple-light); }
-    .tab:hover:not(.active) { background: rgba(255,255,255,0.04); color: var(--text-dim); }
-    .tab-icon { font-size: 18px; }
-
-    /* ─── TOAST ─── */
-    .toast {
-      position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
-      background: rgba(139,92,246,0.9); color: white;
-      padding: 10px 24px; border-radius: 30px;
-      font-size: 13px; font-weight: 500;
-      backdrop-filter: blur(20px);
-      animation: toastIn 0.3s ease, toastOut 0.3s ease 1.7s forwards;
-      z-index: 100; pointer-events: none;
-    }
-    @keyframes toastIn { from { opacity:0; transform: translateX(-50%) translateY(20px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
-    @keyframes toastOut { from { opacity:1; } to { opacity:0; transform: translateX(-50%) translateY(-10px); } }
-
-    .done { opacity: 0.35; }
-    .done .task-text { text-decoration: line-through; }
-
-    .fade-in { animation: fadeIn 0.25s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-    .stat-bar {
-      border-radius: 4px;
-      transition: width 0.6s cubic-bezier(0.22,1,0.36,1);
-      min-width: 2px;
-    }
-
-    .pomo-ring { transition: stroke-dashoffset 1s linear; }
-
-    .empty-state { text-align: center; color: #333; padding: 40px 0; font-size: 13px; }
-
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 380px) {
-      .tab { padding: 8px 12px; }
-      .scroll-area { padding: 16px 12px 20px; }
-    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    html,body{height:100%;overflow:hidden}
+    body{background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 40%,#0d1117 100%);color:var(--text);font-family:'JetBrains Mono','Fira Code',monospace}
+    #app{height:100vh;display:flex;flex-direction:column}
+    .grid-bg{position:fixed;inset:0;opacity:.03;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px);background-size:40px 40px;z-index:0}
+    .scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:20px 16px 24px;max-width:560px;margin:0 auto;width:100%;position:relative;z-index:1}
+    .scroll-area::-webkit-scrollbar{width:4px}
+    .scroll-area::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:4px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;backdrop-filter:blur(10px);transition:all .2s}
+    .card:hover{border-color:var(--border-hover);background:var(--card-hover)}
+    .input{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:var(--text);padding:12px 16px;font-size:14px;font-family:inherit;outline:none;width:100%;transition:all .2s}
+    .input:focus{border-color:rgba(139,92,246,.5);box-shadow:0 0 0 3px rgba(139,92,246,.1)}
+    .input::placeholder{color:rgba(255,255,255,.2)}
+    textarea.input{resize:vertical;min-height:60px}
+    .btn{background:linear-gradient(135deg,var(--purple),var(--purple-dark));border:none;color:#fff;padding:10px 20px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(139,92,246,.3)}
+    .btn:active{transform:translateY(0)}
+    .btn-sm{padding:6px 14px;font-size:11px;border-radius:8px}
+    .btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626)}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.1);color:#999;padding:6px 12px;border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer;transition:all .15s}
+    .btn-ghost:hover{background:rgba(255,255,255,.05);color:var(--text)}
+    .icon-btn{background:none;border:none;cursor:pointer;font-size:14px;opacity:.4;transition:all .15s;padding:4px}
+    .icon-btn:hover{opacity:1;transform:scale(1.15)}
+    .tag{font-size:9px;font-weight:600;padding:3px 8px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase}
+    .bottom-nav{background:rgba(10,10,15,.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:4px;z-index:50;flex-shrink:0}
+    .tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 14px;border-radius:12px;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:inherit;font-size:9px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:all .2s}
+    .tab.active{background:rgba(139,92,246,.15);color:var(--purple-light)}
+    .tab:hover:not(.active){background:rgba(255,255,255,.04);color:#888}
+    .tab-icon{font-size:16px}
+    .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(139,92,246,.9);color:#fff;padding:10px 24px;border-radius:30px;font-size:13px;font-weight:500;backdrop-filter:blur(20px);animation:toastIn .3s ease,toastOut .3s ease 1.7s forwards;z-index:100;pointer-events:none}
+    @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+    @keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateX(-50%) translateY(-10px)}}
+    .fade-in{animation:fadeIn .25s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .done-item{opacity:.35}
+    .done-item .item-text{text-decoration:line-through}
+    .pomo-ring{transition:stroke-dashoffset 1s linear}
+    .stat-bar{border-radius:4px;transition:width .6s cubic-bezier(.22,1,.36,1);min-width:2px}
+    .empty{text-align:center;color:#333;padding:30px 0;font-size:13px}
+    .ei-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .ei-quad{border-radius:10px;padding:10px;min-height:100px}
+    .ei-quad-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+    .ei-quad-item{background:rgba(0,0,0,.3);border-radius:8px;padding:8px 10px;margin-bottom:4px;font-size:12px;line-height:1.5;position:relative}
+    .ei-quad-item:hover .qa{opacity:1}
+    .qa{display:flex;gap:2px;opacity:0;transition:opacity .15s;position:absolute;top:3px;right:3px}
+    .toolbar{display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+    .toolbar-sep{width:1px;height:20px;background:rgba(255,255,255,.06);margin:0 2px}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+    .modal{background:#1a1a2e;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:24px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto}
+    .modal h3{font-family:'Space Grotesk',sans-serif;font-size:16px;color:var(--purple-light);margin-bottom:16px}
+    @media(max-width:380px){.tab{padding:6px 10px}.scroll-area{padding:14px 10px 20px}.ei-grid{gap:6px}.ei-quad{padding:8px}}
   </style>
 </head>
 <body>
-
 <div class="grid-bg"></div>
 <div id="app"></div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
-
 <script type="text/babel">
-const { useState, useEffect, useCallback, useRef } = React;
+const{useState,useEffect,useCallback,useRef}=React;
+const SK="mcv2_";
+const load=(k,fb)=>{try{const r=localStorage.getItem(SK+k);return r?JSON.parse(r):fb}catch{return fb}};
+const save=(k,v)=>{try{localStorage.setItem(SK+k,JSON.stringify(v))}catch{}};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const fmt=ts=>{const d=new Date(ts),diff=Date.now()-d;if(diff<60000)return"à l'instant";if(diff<3600000)return`il y a ${Math.floor(diff/60000)} min`;if(diff<86400000)return`il y a ${Math.floor(diff/3600000)}h`;return d.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})};
+const isToday=ts=>new Date(ts).toDateString()===new Date().toDateString();
+const isThisWeek=ts=>{const d=new Date(ts),now=new Date(),ws=new Date(now);ws.setDate(now.getDate()-now.getDay()+1);ws.setHours(0,0,0,0);return d>=ws};
+const notify=(t,b)=>{if("Notification"in window&&Notification.permission==="granted")new Notification(t,{body:b})};
 
-// ─── STORAGE ───
-const SK = "moncerveau_v2_";
-const load = (k, fb) => { try { const r = localStorage.getItem(SK+k); return r ? JSON.parse(r) : fb; } catch { return fb; } };
-const save = (k, v) => { try { localStorage.setItem(SK+k, JSON.stringify(v)); } catch {} };
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-
-// ─── DATE ───
-const fmt = (ts) => {
-  const d = new Date(ts), diff = Date.now() - d;
-  if (diff < 60000) return "à l'instant";
-  if (diff < 3600000) return `il y a ${Math.floor(diff/60000)} min`;
-  if (diff < 86400000) return `il y a ${Math.floor(diff/3600000)}h`;
-  return d.toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
-};
-const isToday = ts => new Date(ts).toDateString() === new Date().toDateString();
-const isThisWeek = ts => {
-  const d = new Date(ts), now = new Date(), ws = new Date(now);
-  ws.setDate(now.getDate()-now.getDay()+1); ws.setHours(0,0,0,0);
-  return d >= ws;
-};
-
-// ─── NOTIF ───
-const notify = (title, body) => {
-  if ("Notification" in window && Notification.permission === "granted")
-    new Notification(title, { body });
-};
-
-const PRIOS = [
-  { key:"urgent", label:"🔴 Urgent", color:"#ff4757" },
-  { key:"important", label:"🟠 Important", color:"#ffa502" },
-  { key:"low", label:"🟢 Quand je peux", color:"#2ed573" },
+const QUADS=[
+  {key:"q1",label:"🔥 Faire",sub:"Urgent + Important",color:"#ef4444",bg:"rgba(239,68,68,0.08)",border:"rgba(239,68,68,0.2)"},
+  {key:"q2",label:"📅 Planifier",sub:"Important, pas urgent",color:"#f59e0b",bg:"rgba(245,158,11,0.08)",border:"rgba(245,158,11,0.2)"},
+  {key:"q3",label:"👋 Déléguer",sub:"Urgent, pas important",color:"#3b82f6",bg:"rgba(59,130,246,0.08)",border:"rgba(59,130,246,0.2)"},
+  {key:"q4",label:"🗑 Éliminer",sub:"Ni urgent ni important",color:"#6b7280",bg:"rgba(107,114,128,0.08)",border:"rgba(107,114,128,0.2)"},
 ];
-const JCATS = ["Problème résolu","Idée","Amélioration","Note","Victoire"];
-const JCOLORS = {"Problème résolu":"#34d399","Idée":"#fbbf24","Amélioration":"#60a5fa","Note":"#a78bfa","Victoire":"#f472b6"};
-const POMO_WORK = 25*60, POMO_BREAK = 5*60;
+const quadOf=k=>QUADS.find(q=>q.key===k)||QUADS[3];
+const JCATS=["Problème résolu","Idée","Amélioration","Note","Victoire"];
+const JCOLORS={"Problème résolu":"#34d399","Idée":"#fbbf24","Amélioration":"#60a5fa","Note":"#a78bfa","Victoire":"#f472b6"};
+const POMO_WORK=25*60,POMO_BREAK=5*60;
 
-function App() {
-  const [tab, setTab] = useState("flash");
-  const [toast, setToast] = useState(null);
-  const toastTimer = useRef(null);
+function App(){
+  const[tab,setTab]=useState("flash");
+  const[toast,setToast]=useState(null);
+  const tRef=useRef(null);
+  const[flashes,setFlashes]=useState(()=>load("flashes",[]));
+  const[tasks,setTasks]=useState(()=>load("tasks",[]));
+  const[journal,setJournal]=useState(()=>load("journal",[]));
+  const[archive,setArchive]=useState(()=>load("archive",[]));
+  const[pomoSessions,setPomoSessions]=useState(()=>load("pomo",[]));
+  const[flashInput,setFlashInput]=useState("");
+  const[taskInput,setTaskInput]=useState("");
+  const[jInput,setJInput]=useState("");
+  const[jCat,setJCat]=useState(JCATS[0]);
+  const[newQuad,setNewQuad]=useState("q1");
+  const[viewMode,setViewMode]=useState(()=>load("viewMode","grid"));
+  const[jFilter,setJFilter]=useState("Tout");
+  const[showStats,setShowStats]=useState(false);
+  const[editItem,setEditItem]=useState(null);
+  const[editText,setEditText]=useState("");
+  const[editQuad,setEditQuad]=useState("q1");
+  const[editCat,setEditCat]=useState(JCATS[0]);
+  const[confirmAction,setConfirmAction]=useState(null);
+  const[pomoOn,setPomoOn]=useState(false);
+  const[pomoTime,setPomoTime]=useState(POMO_WORK);
+  const[pomoBreak,setPomoBreak]=useState(false);
+  const pomoRef=useRef(null);
+
+  useEffect(()=>save("flashes",flashes),[flashes]);
+  useEffect(()=>save("tasks",tasks),[tasks]);
+  useEffect(()=>save("journal",journal),[journal]);
+  useEffect(()=>save("archive",archive),[archive]);
+  useEffect(()=>save("pomo",pomoSessions),[pomoSessions]);
+  useEffect(()=>save("viewMode",viewMode),[viewMode]);
+  useEffect(()=>{if("Notification"in window&&Notification.permission==="default")Notification.requestPermission()},[]);
+
+  const showToast=useCallback(msg=>{clearTimeout(tRef.current);setToast(msg);tRef.current=setTimeout(()=>setToast(null),2000)},[]);
+
+  // Pomodoro
+  useEffect(()=>{
+    if(pomoOn){
+      pomoRef.current=setInterval(()=>{
+        setPomoTime(prev=>{
+          if(prev<=1){clearInterval(pomoRef.current);
+            if(!pomoBreak){const s={id:uid(),ts:Date.now()};setPomoSessions(p=>{const n=[...p,s];save("pomo",n);return n});notify("🧠 Pomodoro terminé !","Pause de 5 min.");showToast("🍅 Session terminée !");setPomoBreak(true);setPomoOn(false);return POMO_BREAK}
+            else{notify("⚡ Pause terminée !","C'est reparti !");showToast("⚡ Go !");setPomoBreak(false);setPomoOn(false);return POMO_WORK}}
+          return prev-1});
+      },1000);
+    }else clearInterval(pomoRef.current);
+    return()=>clearInterval(pomoRef.current);
+  },[pomoOn,pomoBreak]);
+
+  const fmtP=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+  const pomoPct=pomoBreak?((POMO_BREAK-pomoTime)/POMO_BREAK)*100:((POMO_WORK-pomoTime)/POMO_WORK)*100;
+
+  // Generic
+  const del=(setter,id)=>setter(p=>p.filter(x=>x.id!==id));
+  const upd=(setter,id,u)=>setter(p=>p.map(x=>x.id===id?{...x,...u}:x));
+
+  const doArchive=(source,id)=>{
+    const src={flash:flashes,tasks,journal}[source];
+    const setterMap={flash:setFlashes,tasks:setTasks,journal:setJournal};
+    const item=src.find(x=>x.id===id);
+    if(item){setArchive(p=>[{...item,_source:source,_archivedAt:Date.now()},...p]);setterMap[source](p=>p.filter(x=>x.id!==id));showToast("📦 Archivé !")}
+  };
+  const restore=(archId)=>{
+    const item=archive.find(x=>x.id===archId);if(!item)return;
+    const{_source,_archivedAt,...clean}=item;
+    ({flash:setFlashes,tasks:setTasks,journal:setJournal})[_source](p=>[clean,...p]);
+    setArchive(p=>p.filter(x=>x.id!==archId));showToast("♻️ Restauré !");
+  };
+  const bulkDel=(source)=>{
+    const label={flash:"Flash",tasks:"Tâches",journal:"Boulot"}[source];
+    setConfirmAction({msg:`Supprimer TOUS les éléments de ${label} ?`,onConfirm:()=>{{flash:setFlashes,tasks:setTasks,journal:setJournal}[source]([]);showToast("🗑 Tout supprimé !");setConfirmAction(null)}});
+  };
 
   // Flash
-  const [flashes, setFlashes] = useState(() => load("flashes",[]));
-  const [flashInput, setFlashInput] = useState("");
-  const flashRef = useRef(null);
+  const addFlash=()=>{if(!flashInput.trim())return;setFlashes(p=>[{id:uid(),text:flashInput.trim(),ts:Date.now(),quad:newQuad,pinned:false},...p]);setFlashInput("");showToast("⚡ Capturé !")};
+  const flash2Task=f=>{setTasks(p=>[{id:uid(),text:f.text,ts:Date.now(),quad:f.quad,done:false},...p]);del(setFlashes,f.id);showToast("✅ → Tâche !")};
 
   // Tasks
-  const [tasks, setTasks] = useState(() => load("tasks",[]));
-  const [taskInput, setTaskInput] = useState("");
-  const [taskPrio, setTaskPrio] = useState("urgent");
+  const addTask=()=>{if(!taskInput.trim())return;setTasks(p=>[{id:uid(),text:taskInput.trim(),ts:Date.now(),quad:newQuad,done:false},...p]);setTaskInput("");showToast("✅ Ajoutée !")};
+  const toggleTask=id=>{const t=tasks.find(x=>x.id===id);upd(setTasks,id,{done:!t.done,doneAt:!t.done?Date.now():null})};
 
   // Journal
-  const [journal, setJournal] = useState(() => load("journal",[]));
-  const [jInput, setJInput] = useState("");
-  const [jCat, setJCat] = useState(JCATS[0]);
-  const [jFilter, setJFilter] = useState("Tout");
+  const addJournal=()=>{if(!jInput.trim())return;setJournal(p=>[{id:uid(),text:jInput.trim(),category:jCat,ts:Date.now(),quad:newQuad},...p]);setJInput("");showToast("🔧 Enregistré !")};
+  const filtJ=jFilter==="Tout"?journal:journal.filter(j=>j.category===jFilter);
+
+  // Edit
+  const openEdit=(item,source)=>{setEditItem({...item,_source:source});setEditText(item.text);setEditQuad(item.quad||"q1");setEditCat(item.category||JCATS[0])};
+  const saveEdit=()=>{if(!editItem)return;const u={text:editText,quad:editQuad};if(editItem._source==="journal")u.category=editCat;upd({flash:setFlashes,tasks:setTasks,journal:setJournal}[editItem._source],editItem.id,u);setEditItem(null);showToast("✏️ Modifié !")};
+
+  // Sort
+  const groupByQuad=arr=>{const g={q1:[],q2:[],q3:[],q4:[]};arr.forEach(x=>(g[x.quad||"q4"]||(g[x.quad||"q4"]=[])).push(x));return g};
+  const sortByQuad=arr=>{const o={q1:0,q2:1,q3:2,q4:3};return[...arr].sort((a,b)=>o[a.quad||"q4"]-o[b.quad||"q4"]||b.ts-a.ts)};
 
   // Stats
-  const [showStats, setShowStats] = useState(false);
+  const sToday=arr=>arr.filter(x=>isToday(x.ts)).length;
+  const sWeek=arr=>arr.filter(x=>isThisWeek(x.ts)).length;
+  const todayDone=tasks.filter(t=>t.done&&t.doneAt&&isToday(t.doneAt)).length;
+  const weekDone=tasks.filter(t=>t.done&&t.doneAt&&isThisWeek(t.doneAt)).length;
+  const last7=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));d.setHours(0,0,0,0);const n=new Date(d);n.setDate(d.getDate()+1);const inR=ts=>ts>=d.getTime()&&ts<n.getTime();return{label:d.toLocaleDateString("fr-FR",{weekday:"short"}),f:flashes.filter(x=>inR(x.ts)).length,t:tasks.filter(x=>x.done&&x.doneAt&&inR(x.doneAt)).length,j:journal.filter(x=>inR(x.ts)).length,p:pomoSessions.filter(x=>inR(x.ts)).length}});
+  const chartMax=Math.max(1,...last7.flatMap(d=>[d.f,d.t,d.j,d.p]));
 
-  // Pomo
-  const [pomoOn, setPomoOn] = useState(false);
-  const [pomoTime, setPomoTime] = useState(POMO_WORK);
-  const [pomoBreak, setPomoBreak] = useState(false);
-  const [pomoSessions, setPomoSessions] = useState(() => load("pomo",[]));
-  const pomoRef = useRef(null);
+  const tabs=[{key:"flash",icon:"⚡",label:"Flash"},{key:"tasks",icon:"✅",label:"Tâches"},{key:"journal",icon:"🔧",label:"Boulot"},{key:"pomo",icon:"🍅",label:"Pomo"},{key:"archive",icon:"📦",label:"Archive"}];
 
-  // Persist
-  useEffect(() => save("flashes", flashes), [flashes]);
-  useEffect(() => save("tasks", tasks), [tasks]);
-  useEffect(() => save("journal", journal), [journal]);
-  useEffect(() => save("pomo", pomoSessions), [pomoSessions]);
+  // ─── QuadSelector ───
+  const QS=({value,onChange})=>(
+    <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+      {QUADS.map(q=>(
+        <button key={q.key} onClick={()=>onChange(q.key)} style={{
+          padding:"5px 10px",borderRadius:8,fontSize:10,fontFamily:"inherit",fontWeight:600,cursor:"pointer",transition:"all .15s",
+          background:value===q.key?q.bg:"transparent",
+          border:`2px solid ${value===q.key?q.color:"rgba(255,255,255,0.08)"}`,
+          color:value===q.key?q.color:"#666"
+        }}>{q.label}</button>
+      ))}
+    </div>
+  );
 
-  // Notif permission
-  useEffect(() => {
-    if ("Notification" in window && Notification.permission === "default")
-      Notification.requestPermission();
-  }, []);
-
-  const showToast = useCallback((msg) => {
-    clearTimeout(toastTimer.current);
-    setToast(msg);
-    toastTimer.current = setTimeout(() => setToast(null), 2000);
-  }, []);
-
-  // ─── POMODORO ───
-  useEffect(() => {
-    if (pomoOn) {
-      pomoRef.current = setInterval(() => {
-        setPomoTime(prev => {
-          if (prev <= 1) {
-            clearInterval(pomoRef.current);
-            if (!pomoBreak) {
-              const s = { id: uid(), ts: Date.now() };
-              setPomoSessions(p => { const n=[...p,s]; save("pomo",n); return n; });
-              notify("🧠 Pomodoro terminé !","Bravo ! Pause de 5 min.");
-              showToast("🍅 Session terminée !");
-              setPomoBreak(true);
-              setPomoOn(false);
-              return POMO_BREAK;
-            } else {
-              notify("⚡ Pause terminée !","C'est reparti !");
-              showToast("⚡ Go !");
-              setPomoBreak(false);
-              setPomoOn(false);
-              return POMO_WORK;
-            }
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else clearInterval(pomoRef.current);
-    return () => clearInterval(pomoRef.current);
-  }, [pomoOn, pomoBreak]);
-
-  const fmtPomo = s => `${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
-  const pomoPct = pomoBreak ? ((POMO_BREAK-pomoTime)/POMO_BREAK)*100 : ((POMO_WORK-pomoTime)/POMO_WORK)*100;
-
-  // ─── FLASH ───
-  const addFlash = () => {
-    if (!flashInput.trim()) return;
-    setFlashes(p => [{id:uid(),text:flashInput.trim(),ts:Date.now(),pinned:false},...p]);
-    setFlashInput(""); showToast("⚡ Capturé !"); flashRef.current?.focus();
-  };
-  const pinFlash = id => setFlashes(p => p.map(f => f.id===id ? {...f,pinned:!f.pinned} : f));
-  const delFlash = id => setFlashes(p => p.filter(f => f.id!==id));
-  const flash2Task = f => {
-    setTasks(p => [{id:uid(),text:f.text,priority:"important",ts:Date.now(),done:false},...p]);
-    delFlash(f.id); showToast("✅ → Tâche !");
+  // ─── Actions row (for grid items) ───
+  const Actions=({item,source,small})=>{
+    const setter={flash:setFlashes,tasks:setTasks,journal:setJournal}[source];
+    const sz=small?{fontSize:11}:{fontSize:14};
+    return(
+      <div className={small?"qa":""} style={small?{}:{display:"flex",gap:2,flexShrink:0}}>
+        {source==="flash"&&<button className="icon-btn" style={sz} onClick={()=>upd(setFlashes,item.id,{pinned:!item.pinned})}>{item.pinned?"📌":"📍"}</button>}
+        {source==="flash"&&<button className="icon-btn" style={sz} onClick={()=>flash2Task(item)}>➡️</button>}
+        <button className="icon-btn" style={sz} onClick={()=>openEdit(item,source)}>✏️</button>
+        <button className="icon-btn" style={sz} onClick={()=>doArchive(source,item.id)}>📦</button>
+        <button className="icon-btn" style={sz} onClick={()=>{del(setter,item.id);showToast("🗑")}}>✕</button>
+      </div>
+    );
   };
 
-  // ─── TASKS ───
-  const addTask = () => {
-    if (!taskInput.trim()) return;
-    setTasks(p => [{id:uid(),text:taskInput.trim(),priority:taskPrio,ts:Date.now(),done:false},...p]);
-    setTaskInput(""); showToast("✅ Ajoutée !");
+  // ─── GridView ───
+  const GV=({items,source})=>{
+    const groups=groupByQuad(items);
+    return(
+      <div className="ei-grid">
+        {QUADS.map(q=>(
+          <div key={q.key} className="ei-quad" style={{background:q.bg,border:`1px solid ${q.border}`}}>
+            <div className="ei-quad-title" style={{color:q.color}}>{q.label} <span style={{fontSize:8,opacity:.6}}>({groups[q.key].length})</span></div>
+            {groups[q.key].length===0&&<div style={{fontSize:10,color:"#333",textAlign:"center",padding:"8px 0"}}>—</div>}
+            {groups[q.key].map(item=>{
+              const isDone=source==="tasks"&&item.done;
+              return(
+                <div key={item.id} className={`ei-quad-item ${isDone?"done-item":""}`}>
+                  <div style={{display:"flex",alignItems:"flex-start",gap:6}}>
+                    {source==="tasks"&&<button onClick={()=>toggleTask(item.id)} style={{width:16,height:16,borderRadius:4,flexShrink:0,marginTop:1,border:`2px solid ${isDone?"#444":q.color}`,background:isDone?"#444":"transparent",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:"#fff"}}>{isDone&&"✓"}</button>}
+                    <span className="item-text" style={{flex:1,color:isDone?"#444":"#bbb",wordBreak:"break-word"}}>{item.text}</span>
+                  </div>
+                  {source==="journal"&&item.category&&<div style={{marginTop:3}}><span className="tag" style={{background:(JCOLORS[item.category]||"#888")+"18",color:JCOLORS[item.category]||"#888"}}>{item.category}</span></div>}
+                  <Actions item={item} source={source} small/>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    );
   };
-  const toggleTask = id => setTasks(p => p.map(t => t.id===id ? {...t,done:!t.done,doneAt:!t.done?Date.now():null} : t));
-  const delTask = id => setTasks(p => p.filter(t => t.id!==id));
 
-  // ─── JOURNAL ───
-  const addJournal = () => {
-    if (!jInput.trim()) return;
-    setJournal(p => [{id:uid(),text:jInput.trim(),category:jCat,ts:Date.now()},...p]);
-    setJInput(""); showToast("🔧 Enregistré !");
+  // ─── ListView ───
+  const LV=({items,source})=>{
+    const sorted=source==="flash"?[...items].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||({q1:0,q2:1,q3:2,q4:3}[a.quad||"q4"])-({q1:0,q2:1,q3:2,q4:3}[b.quad||"q4"])||b.ts-a.ts):source==="tasks"?[...items].sort((a,b)=>{if(a.done!==b.done)return a.done?1:-1;return({q1:0,q2:1,q3:2,q4:3}[a.quad||"q4"])-({q1:0,q2:1,q3:2,q4:3}[b.quad||"q4"])||b.ts-a.ts}):sortByQuad(items);
+    return(
+      <div style={{display:"flex",flexDirection:"column",gap:6}}>
+        {sorted.map(item=>{
+          const q=quadOf(item.quad);const isDone=source==="tasks"&&item.done;
+          return(
+            <div key={item.id} className={`card ${isDone?"done-item":""}`} style={{padding:"10px 14px",borderLeft:`3px solid ${isDone?"#333":q.color}`,position:"relative"}}>
+              <div style={{display:"flex",alignItems:"flex-start",gap:10}}>
+                {source==="tasks"&&<button onClick={()=>toggleTask(item.id)} style={{width:20,height:20,borderRadius:6,flexShrink:0,marginTop:2,border:`2px solid ${isDone?"#333":q.color}`,background:isDone?"#333":"transparent",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"#fff",transition:"all .2s"}}>{isDone&&"✓"}</button>}
+                <div style={{flex:1,minWidth:0}}>
+                  <div className="item-text" style={{fontSize:13,color:isDone?"#555":"#d0d0d0",lineHeight:1.5,wordBreak:"break-word"}}>{item.text}</div>
+                  <div style={{display:"flex",gap:5,alignItems:"center",marginTop:5,flexWrap:"wrap"}}>
+                    <span className="tag" style={{background:q.bg,color:q.color}}>{q.label}</span>
+                    {source==="journal"&&item.category&&<span className="tag" style={{background:(JCOLORS[item.category]||"#888")+"18",color:JCOLORS[item.category]||"#888"}}>{item.category}</span>}
+                    {source==="flash"&&item.pinned&&<span style={{fontSize:10}}>📌</span>}
+                    <span style={{fontSize:9,color:"#444"}}>{fmt(item.ts)}</span>
+                  </div>
+                </div>
+                <Actions item={item} source={source}/>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
   };
-  const delJournal = id => setJournal(p => p.filter(j => j.id!==id));
-  const filtJ = jFilter==="Tout" ? journal : journal.filter(j => j.category===jFilter);
 
-  // ─── STATS ───
-  const sToday = (arr, key="ts") => arr.filter(x => isToday(x[key] || x.ts)).length;
-  const sWeek = (arr, key="ts") => arr.filter(x => isThisWeek(x[key] || x.ts)).length;
-  const todayDone = tasks.filter(t => t.done && t.doneAt && isToday(t.doneAt)).length;
-  const weekDone = tasks.filter(t => t.done && t.doneAt && isThisWeek(t.doneAt)).length;
+  // ─── Toolbar ───
+  const TB=({source,count})=>(
+    <div className="toolbar">
+      <button className="btn-ghost" onClick={()=>{const v=viewMode==="grid"?"list":"grid";setViewMode(v);save("viewMode",v)}} style={{fontSize:11,padding:"5px 10px"}}>{viewMode==="grid"?"☰ Liste":"⊞ Grille"}</button>
+      <div className="toolbar-sep"/>
+      <span style={{fontSize:10,color:"#444"}}>{count} élément{count>1?"s":""}</span>
+      <div style={{flex:1}}/>
+      {count>0&&<button className="btn-ghost" onClick={()=>bulkDel(source)} style={{fontSize:10,color:"#ef4444",borderColor:"rgba(239,68,68,.2)",padding:"4px 10px"}}>🗑 Tout</button>}
+    </div>
+  );
 
-  const last7 = Array.from({length:7},(_,i) => {
-    const d=new Date(); d.setDate(d.getDate()-(6-i)); d.setHours(0,0,0,0);
-    const n=new Date(d); n.setDate(d.getDate()+1);
-    const inRange = (ts) => ts>=d.getTime() && ts<n.getTime();
-    return {
-      label: d.toLocaleDateString("fr-FR",{weekday:"short"}),
-      f: flashes.filter(x=>inRange(x.ts)).length,
-      t: tasks.filter(x=>x.done&&x.doneAt&&inRange(x.doneAt)).length,
-      j: journal.filter(x=>inRange(x.ts)).length,
-      p: pomoSessions.filter(x=>inRange(x.ts)).length,
-    };
-  });
-  const chartMax = Math.max(1,...last7.flatMap(d=>[d.f,d.t,d.j,d.p]));
-
-  // Sorted
-  const sortedFlashes = [...flashes].sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0) || b.ts-a.ts);
-  const sortedTasks = [...tasks].sort((a,b) => {
-    if (a.done!==b.done) return a.done?1:-1;
-    return PRIOS.findIndex(p=>p.key===a.priority) - PRIOS.findIndex(p=>p.key===b.priority) || b.ts-a.ts;
-  });
-
-  const tabs = [{key:"flash",icon:"⚡",label:"Flash"},{key:"tasks",icon:"✅",label:"Tâches"},{key:"journal",icon:"🔧",label:"Boulot"},{key:"pomo",icon:"🍅",label:"Pomo"}];
-
-  return (
+  return(
     <>
       <div className="scroll-area">
-        {/* HEADER */}
-        <div style={{textAlign:"center",marginBottom:24}}>
-          <div style={{fontSize:28,marginBottom:4}}>🧠</div>
-          <h1 style={{fontFamily:"'Space Grotesk',sans-serif",fontSize:22,fontWeight:700,
-            background:"linear-gradient(135deg,#c4b5fd,#8b5cf6,#6d28d9)",
-            WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-0.5px"}}>
-            MON CERVEAU
-          </h1>
-          <div style={{fontSize:10,color:"#555",letterSpacing:2,marginTop:4,textTransform:"uppercase"}}>
-            v2 — capture · agis · trace
-          </div>
-          <button onClick={()=>setShowStats(!showStats)} style={{
-            marginTop:10,background:"none",border:"1px solid rgba(255,255,255,0.08)",
-            color:showStats?"#c4b5fd":"#555",padding:"5px 14px",borderRadius:20,
-            fontSize:11,cursor:"pointer",fontFamily:"inherit",fontWeight:500}}>
-            {showStats ? "✕ Fermer stats" : "📊 Stats"}
-          </button>
+        {/* Header */}
+        <div style={{textAlign:"center",marginBottom:18}}>
+          <div style={{fontSize:26,marginBottom:2}}>🧠</div>
+          <h1 style={{fontFamily:"'Space Grotesk',sans-serif",fontSize:20,fontWeight:700,background:"linear-gradient(135deg,#c4b5fd,#8b5cf6,#6d28d9)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-.5px"}}>MON CERVEAU</h1>
+          <div style={{fontSize:9,color:"#555",letterSpacing:2,marginTop:2,textTransform:"uppercase"}}>v2 — eisenhower · capture · agis</div>
+          <button onClick={()=>setShowStats(!showStats)} style={{marginTop:8,background:"none",border:"1px solid rgba(255,255,255,0.08)",color:showStats?"#c4b5fd":"#555",padding:"4px 12px",borderRadius:20,fontSize:10,cursor:"pointer",fontFamily:"inherit",fontWeight:500}}>{showStats?"✕ Fermer":"📊 Stats"}</button>
         </div>
 
-        {/* STATS */}
-        {showStats && (
-          <div className="card fade-in" style={{padding:20,marginBottom:20}}>
-            <div style={{fontSize:13,fontWeight:600,color:"#c4b5fd",marginBottom:16,fontFamily:"'Space Grotesk',sans-serif"}}>📊 Tableau de bord</div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
-              {[["Aujourd'hui", sToday(flashes), todayDone, sToday(journal), sToday(pomoSessions)],
-                ["Semaine", sWeek(flashes), weekDone, sWeek(journal), sWeek(pomoSessions)]].map(([label,f,t,j,p])=>(
-                <div key={label} style={{background:"rgba(139,92,246,0.08)",borderRadius:10,padding:14,textAlign:"center"}}>
-                  <div style={{fontSize:10,color:"#888",textTransform:"uppercase",letterSpacing:1}}>{label}</div>
-                  <div style={{display:"flex",justifyContent:"center",gap:16,marginTop:10}}>
+        {/* Stats */}
+        {showStats&&(
+          <div className="card fade-in" style={{padding:16,marginBottom:16}}>
+            <div style={{fontSize:12,fontWeight:600,color:"#c4b5fd",marginBottom:12,fontFamily:"'Space Grotesk',sans-serif"}}>📊 Tableau de bord</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:16}}>
+              {[["Aujourd'hui",sToday(flashes),todayDone,sToday(journal),sToday(pomoSessions)],["Semaine",sWeek(flashes),weekDone,sWeek(journal),sWeek(pomoSessions)]].map(([l,f,t,j,p])=>(
+                <div key={l} style={{background:"rgba(139,92,246,0.08)",borderRadius:10,padding:12,textAlign:"center"}}>
+                  <div style={{fontSize:9,color:"#888",textTransform:"uppercase",letterSpacing:1}}>{l}</div>
+                  <div style={{display:"flex",justifyContent:"center",gap:12,marginTop:8}}>
                     {[[f,"#fbbf24","⚡"],[t,"#34d399","✅"],[j,"#60a5fa","🔧"],[p,"#f87171","🍅"]].map(([v,c,ic])=>(
-                      <div key={ic}><div style={{fontSize:20,fontWeight:700,color:c}}>{v}</div><div style={{fontSize:9,color:"#666"}}>{ic}</div></div>
+                      <div key={ic}><div style={{fontSize:18,fontWeight:700,color:c}}>{v}</div><div style={{fontSize:8,color:"#666"}}>{ic}</div></div>
                     ))}
                   </div>
                 </div>
               ))}
             </div>
-            <div style={{fontSize:11,color:"#666",marginBottom:10}}>7 derniers jours</div>
-            <div style={{display:"flex",gap:6,alignItems:"end",height:80}}>
-              {last7.map((d,i) => (
-                <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}>
-                  <div style={{width:"100%",display:"flex",flexDirection:"column",gap:2,height:60,justifyContent:"flex-end"}}>
-                    {d.f>0 && <div className="stat-bar" style={{width:"100%",height:Math.max(2,(d.f/chartMax)*30),background:"#fbbf24"}} />}
-                    {d.t>0 && <div className="stat-bar" style={{width:"100%",height:Math.max(2,(d.t/chartMax)*30),background:"#34d399"}} />}
-                    {d.j>0 && <div className="stat-bar" style={{width:"100%",height:Math.max(2,(d.j/chartMax)*30),background:"#60a5fa"}} />}
-                    {d.p>0 && <div className="stat-bar" style={{width:"100%",height:Math.max(2,(d.p/chartMax)*30),background:"#f87171"}} />}
+            <div style={{fontSize:10,color:"#666",marginBottom:8}}>7 derniers jours</div>
+            <div style={{display:"flex",gap:5,alignItems:"end",height:70}}>
+              {last7.map((d,i)=>(
+                <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
+                  <div style={{width:"100%",display:"flex",flexDirection:"column",gap:1,height:50,justifyContent:"flex-end"}}>
+                    {d.f>0&&<div className="stat-bar" style={{width:"100%",height:Math.max(2,(d.f/chartMax)*25),background:"#fbbf24"}}/>}
+                    {d.t>0&&<div className="stat-bar" style={{width:"100%",height:Math.max(2,(d.t/chartMax)*25),background:"#34d399"}}/>}
+                    {d.j>0&&<div className="stat-bar" style={{width:"100%",height:Math.max(2,(d.j/chartMax)*25),background:"#60a5fa"}}/>}
+                    {d.p>0&&<div className="stat-bar" style={{width:"100%",height:Math.max(2,(d.p/chartMax)*25),background:"#f87171"}}/>}
                   </div>
-                  <div style={{fontSize:9,color:"#555"}}>{d.label}</div>
+                  <div style={{fontSize:8,color:"#555"}}>{d.label}</div>
                 </div>
               ))}
             </div>
-            <div style={{display:"flex",gap:14,justifyContent:"center",marginTop:12}}>
+            <div style={{display:"flex",gap:10,justifyContent:"center",marginTop:10}}>
               {[["⚡","#fbbf24"],["✅","#34d399"],["🔧","#60a5fa"],["🍅","#f87171"]].map(([ic,c])=>(
-                <div key={ic} style={{display:"flex",alignItems:"center",gap:4}}>
-                  <div style={{width:8,height:8,borderRadius:2,background:c}} /><span style={{fontSize:10,color:"#666"}}>{ic}</span>
-                </div>
+                <div key={ic} style={{display:"flex",alignItems:"center",gap:3}}><div style={{width:7,height:7,borderRadius:2,background:c}}/><span style={{fontSize:9,color:"#666"}}>{ic}</span></div>
               ))}
             </div>
-            <div style={{marginTop:16,padding:"10px 0",borderTop:"1px solid rgba(255,255,255,0.06)",textAlign:"center"}}>
-              <span style={{fontSize:11,color:"#555"}}>Total : {flashes.length} flashes · {tasks.filter(t=>t.done).length}/{tasks.length} tâches · {journal.length} entrées · {pomoSessions.length} 🍅</span>
+            <div style={{marginTop:12,paddingTop:10,borderTop:"1px solid rgba(255,255,255,.06)",textAlign:"center",fontSize:10,color:"#555"}}>
+              {flashes.length} flashes · {tasks.filter(t=>t.done).length}/{tasks.length} tâches · {journal.length} entrées · {pomoSessions.length} 🍅 · {archive.length} archivés
             </div>
           </div>
         )}
 
-        {/* ═══ FLASH ═══ */}
-        {tab==="flash" && (
-          <div className="fade-in">
-            <div style={{display:"flex",gap:8,marginBottom:16}}>
-              <input ref={flashRef} className="input" value={flashInput} onChange={e=>setFlashInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addFlash()} placeholder="Une idée ? Capture-la..." autoFocus />
-              <button className="btn" onClick={addFlash}>⚡</button>
+        {/* Flash */}
+        {tab==="flash"&&<div className="fade-in">
+          <div style={{display:"flex",gap:8,marginBottom:8}}><input className="input" value={flashInput} onChange={e=>setFlashInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addFlash()} placeholder="Une idée ? Capture-la..." autoFocus/><button className="btn" onClick={addFlash}>⚡</button></div>
+          <QS value={newQuad} onChange={setNewQuad}/><div style={{height:10}}/>
+          <TB source="flash" count={flashes.length}/>
+          {flashes.length===0&&<div className="empty">Ton cerveau est vide... ⚡</div>}
+          {viewMode==="grid"?<GV items={flashes} source="flash"/>:<LV items={flashes} source="flash"/>}
+        </div>}
+
+        {/* Tasks */}
+        {tab==="tasks"&&<div className="fade-in">
+          <div style={{display:"flex",gap:8,marginBottom:8}}><input className="input" value={taskInput} onChange={e=>setTaskInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTask()} placeholder="Nouvelle tâche..."/><button className="btn" onClick={addTask}>+</button></div>
+          <QS value={newQuad} onChange={setNewQuad}/><div style={{height:10}}/>
+          <TB source="tasks" count={tasks.length}/>
+          {tasks.length===0&&<div className="empty">Rien à faire ? Profite ! ✅</div>}
+          {viewMode==="grid"?<GV items={tasks} source="tasks"/>:<LV items={tasks} source="tasks"/>}
+        </div>}
+
+        {/* Journal */}
+        {tab==="journal"&&<div className="fade-in">
+          <textarea className="input" value={jInput} onChange={e=>setJInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();addJournal()}}} placeholder="Qu'est-ce que tu as fait / résolu / trouvé ?" rows={2} style={{marginBottom:8}}/>
+          <div style={{display:"flex",gap:4,marginBottom:6,flexWrap:"wrap"}}>
+            {JCATS.map(c=><button key={c} className="btn-ghost" onClick={()=>setJCat(c)} style={{borderColor:jCat===c?"#60a5fa":"rgba(255,255,255,0.08)",color:jCat===c?"#60a5fa":"#666",fontSize:10,padding:"4px 10px"}}>{c}</button>)}
+          </div>
+          <QS value={newQuad} onChange={setNewQuad}/>
+          <button className="btn btn-sm" onClick={addJournal} style={{marginTop:8,marginBottom:4}}>🔧 Sauver</button>
+          <div style={{display:"flex",gap:4,marginTop:6,marginBottom:10,flexWrap:"wrap"}}>
+            {["Tout",...JCATS].map(c=><button key={c} onClick={()=>setJFilter(c)} style={{background:jFilter===c?"rgba(96,165,250,0.15)":"transparent",border:"none",color:jFilter===c?"#93c5fd":"#444",padding:"3px 8px",borderRadius:16,fontSize:9,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>{c}</button>)}
+          </div>
+          <TB source="journal" count={filtJ.length}/>
+          {filtJ.length===0&&<div className="empty">Rien ici encore 🔧</div>}
+          {viewMode==="grid"?<GV items={filtJ} source="journal"/>:<LV items={filtJ} source="journal"/>}
+        </div>}
+
+        {/* Pomo */}
+        {tab==="pomo"&&<div className="fade-in" style={{textAlign:"center"}}>
+          <div style={{position:"relative",width:180,height:180,margin:"16px auto"}}>
+            <svg width="180" height="180" viewBox="0 0 200 200"><circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="6"/><circle cx="100" cy="100" r="88" fill="none" stroke={pomoBreak?"#34d399":"#8b5cf6"} strokeWidth="6" strokeLinecap="round" strokeDasharray={2*Math.PI*88} strokeDashoffset={2*Math.PI*88*(1-pomoPct/100)} className="pomo-ring" transform="rotate(-90 100 100)"/></svg>
+            <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+              <div style={{fontSize:36,fontWeight:700,color:pomoBreak?"#34d399":"#e0e0e0",fontFamily:"'JetBrains Mono',monospace"}}>{fmtP(pomoTime)}</div>
+              <div style={{fontSize:10,color:"#555",marginTop:2,textTransform:"uppercase",letterSpacing:2}}>{pomoBreak?"Pause":"Focus"}</div>
             </div>
-            {sortedFlashes.length===0 && <div className="empty-state">Ton cerveau est vide... pour l'instant ⚡</div>}
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {sortedFlashes.map(f=>(
-                <div key={f.id} className="card" style={{padding:"12px 16px",borderLeft:f.pinned?"3px solid #fbbf24":"3px solid transparent"}}>
-                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-                    <div style={{flex:1,fontSize:14,color:"#d0d0d0",lineHeight:1.6}}>{f.text}</div>
-                    <div style={{display:"flex",gap:4,marginLeft:8,flexShrink:0}}>
-                      <button className="icon-btn" onClick={()=>pinFlash(f.id)}>{f.pinned?"📌":"📍"}</button>
-                      <button className="icon-btn" onClick={()=>flash2Task(f)}>➡️</button>
-                      <button className="icon-btn" onClick={()=>delFlash(f.id)} style={{fontSize:14}}>✕</button>
+          </div>
+          <div style={{display:"flex",gap:8,justifyContent:"center",marginTop:12}}>
+            <button className="btn" onClick={()=>setPomoOn(!pomoOn)} style={{background:pomoOn?"linear-gradient(135deg,#ef4444,#dc2626)":pomoBreak?"linear-gradient(135deg,#34d399,#059669)":"linear-gradient(135deg,#8b5cf6,#7c3aed)",padding:"10px 28px",fontSize:13}}>{pomoOn?"⏸ Pause":pomoBreak?"▶ Lancer pause":"▶ Focus"}</button>
+            <button className="btn-ghost" onClick={()=>{setPomoOn(false);setPomoBreak(false);setPomoTime(POMO_WORK)}} style={{padding:"10px 14px"}}>↻</button>
+          </div>
+          <div style={{marginTop:24}}><div style={{fontSize:11,color:"#555",marginBottom:10}}>Aujourd'hui : {sToday(pomoSessions)} 🍅</div>
+            <div style={{display:"flex",gap:6,justifyContent:"center",flexWrap:"wrap"}}>
+              {pomoSessions.filter(s=>isToday(s.ts)).map(s=><div key={s.id} style={{width:26,height:26,borderRadius:8,background:"rgba(239,68,68,0.15)",border:"1px solid rgba(239,68,68,0.2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>🍅</div>)}
+            </div>
+          </div>
+        </div>}
+
+        {/* Archive */}
+        {tab==="archive"&&<div className="fade-in">
+          <div style={{fontSize:13,fontWeight:600,color:"#c4b5fd",marginBottom:12,fontFamily:"'Space Grotesk',sans-serif"}}>📦 Archives</div>
+          {archive.length===0&&<div className="empty">Rien d'archivé</div>}
+          {archive.length>0&&<button className="btn-ghost" onClick={()=>setConfirmAction({msg:"Vider toutes les archives ?",onConfirm:()=>{setArchive([]);showToast("🗑 Vidé !");setConfirmAction(null)}})} style={{fontSize:10,color:"#ef4444",borderColor:"rgba(239,68,68,.2)",marginBottom:12,padding:"4px 10px"}}>🗑 Tout vider</button>}
+          <div style={{display:"flex",flexDirection:"column",gap:6}}>
+            {archive.map(item=>{const q=quadOf(item.quad);const sl={flash:"⚡",tasks:"✅",journal:"🔧"}[item._source]||"";
+              return(<div key={item.id} className="card" style={{padding:"10px 14px",borderLeft:`3px solid ${q.color}`,opacity:.7}}>
+                <div style={{display:"flex",alignItems:"flex-start",gap:8}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:13,color:"#999",lineHeight:1.5}}>{item.text}</div>
+                    <div style={{display:"flex",gap:5,marginTop:5,flexWrap:"wrap"}}>
+                      <span className="tag" style={{background:"rgba(255,255,255,.05)",color:"#666"}}>{sl} {item._source}</span>
+                      <span className="tag" style={{background:q.bg,color:q.color}}>{q.label}</span>
+                      <span style={{fontSize:9,color:"#444"}}>{fmt(item.ts)}</span>
                     </div>
                   </div>
-                  <div style={{fontSize:10,color:"#444",marginTop:6}}>{fmt(f.ts)}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ═══ TASKS ═══ */}
-        {tab==="tasks" && (
-          <div className="fade-in">
-            <div style={{display:"flex",gap:8,marginBottom:10}}>
-              <input className="input" value={taskInput} onChange={e=>setTaskInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addTask()} placeholder="Nouvelle tâche..." />
-              <button className="btn" onClick={addTask}>+</button>
-            </div>
-            <div style={{display:"flex",gap:6,marginBottom:16}}>
-              {PRIOS.map(p=>(
-                <button key={p.key} className="btn-ghost" onClick={()=>setTaskPrio(p.key)} style={{
-                  borderColor:taskPrio===p.key?p.color:"rgba(255,255,255,0.08)",color:taskPrio===p.key?p.color:"#666",fontSize:11}}>
-                  {p.label}
-                </button>
-              ))}
-            </div>
-            {sortedTasks.length===0 && <div className="empty-state">Rien à faire ? Profite ! ✅</div>}
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {sortedTasks.map(t=>{
-                const pr=PRIOS.find(p=>p.key===t.priority);
-                return (
-                  <div key={t.id} className={`card ${t.done?"done":""}`} style={{padding:"12px 16px",borderLeft:`3px solid ${t.done?"#333":pr?.color||"#555"}`}}>
-                    <div style={{display:"flex",alignItems:"center",gap:12}}>
-                      <button onClick={()=>toggleTask(t.id)} style={{
-                        width:22,height:22,borderRadius:6,flexShrink:0,
-                        border:`2px solid ${t.done?"#333":pr?.color||"#555"}`,
-                        background:t.done?"#333":"transparent",cursor:"pointer",
-                        display:"flex",alignItems:"center",justifyContent:"center",
-                        fontSize:12,color:"#fff",transition:"all 0.2s"}}>
-                        {t.done&&"✓"}
-                      </button>
-                      <div className="task-text" style={{flex:1,fontSize:14,color:t.done?"#555":"#d0d0d0"}}>{t.text}</div>
-                      <div style={{display:"flex",gap:4,alignItems:"center"}}>
-                        <span style={{fontSize:10,color:"#444"}}>{fmt(t.ts)}</span>
-                        <button className="icon-btn" onClick={()=>delTask(t.id)} style={{fontSize:14}}>✕</button>
-                      </div>
-                    </div>
+                  <div style={{display:"flex",gap:4}}>
+                    <button className="icon-btn" onClick={()=>restore(item.id)} title="Restaurer">♻️</button>
+                    <button className="icon-btn" onClick={()=>{del(setArchive,item.id);showToast("🗑 Supprimé")}} title="Supprimer">✕</button>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ═══ JOURNAL ═══ */}
-        {tab==="journal" && (
-          <div className="fade-in">
-            <textarea className="input" value={jInput} onChange={e=>setJInput(e.target.value)}
-              onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();addJournal();}}}
-              placeholder="Qu'est-ce que tu as fait / résolu / trouvé ?" rows={3} style={{marginBottom:10}} />
-            <div style={{display:"flex",gap:6,marginBottom:16,flexWrap:"wrap",alignItems:"center"}}>
-              {JCATS.map(c=>(
-                <button key={c} className="btn-ghost" onClick={()=>setJCat(c)} style={{
-                  borderColor:jCat===c?"#60a5fa":"rgba(255,255,255,0.08)",color:jCat===c?"#60a5fa":"#666",fontSize:11}}>
-                  {c}
-                </button>
-              ))}
-              <button className="btn" onClick={addJournal} style={{marginLeft:"auto"}}>🔧 Sauver</button>
-            </div>
-            <div style={{display:"flex",gap:6,marginBottom:14,flexWrap:"wrap"}}>
-              {["Tout",...JCATS].map(c=>(
-                <button key={c} onClick={()=>setJFilter(c)} style={{
-                  background:jFilter===c?"rgba(96,165,250,0.15)":"transparent",border:"none",
-                  color:jFilter===c?"#93c5fd":"#444",padding:"4px 10px",borderRadius:16,
-                  fontSize:10,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>
-                  {c}
-                </button>
-              ))}
-            </div>
-            {filtJ.length===0 && <div className="empty-state">Rien ici encore 🔧 Commence à tracer !</div>}
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {filtJ.map(e=>(
-                <div key={e.id} className="card" style={{padding:"12px 16px"}}>
-                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
-                    <span className="tag" style={{background:(JCOLORS[e.category]||"#888")+"18",color:JCOLORS[e.category]||"#888"}}>{e.category}</span>
-                    <div style={{display:"flex",alignItems:"center",gap:8}}>
-                      <span style={{fontSize:10,color:"#444"}}>{fmt(e.ts)}</span>
-                      <button className="icon-btn" onClick={()=>delJournal(e.id)} style={{fontSize:14}}>✕</button>
-                    </div>
-                  </div>
-                  <div style={{fontSize:14,color:"#bbb",lineHeight:1.6}}>{e.text}</div>
                 </div>
-              ))}
-            </div>
+              </div>);
+            })}
           </div>
-        )}
-
-        {/* ═══ POMODORO ═══ */}
-        {tab==="pomo" && (
-          <div className="fade-in" style={{textAlign:"center"}}>
-            <div style={{position:"relative",width:200,height:200,margin:"20px auto"}}>
-              <svg width="200" height="200" viewBox="0 0 200 200">
-                <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="6" />
-                <circle cx="100" cy="100" r="88" fill="none"
-                  stroke={pomoBreak?"#34d399":"#8b5cf6"} strokeWidth="6" strokeLinecap="round"
-                  strokeDasharray={2*Math.PI*88}
-                  strokeDashoffset={2*Math.PI*88*(1-pomoPct/100)}
-                  className="pomo-ring" transform="rotate(-90 100 100)" />
-              </svg>
-              <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-                <div style={{fontSize:40,fontWeight:700,color:pomoBreak?"#34d399":"#e0e0e0",fontFamily:"'JetBrains Mono',monospace"}}>
-                  {fmtPomo(pomoTime)}
-                </div>
-                <div style={{fontSize:11,color:"#555",marginTop:4,textTransform:"uppercase",letterSpacing:2}}>
-                  {pomoBreak?"Pause":"Focus"}
-                </div>
-              </div>
-            </div>
-            <div style={{display:"flex",gap:10,justifyContent:"center",marginTop:16}}>
-              <button className="btn" onClick={()=>setPomoOn(!pomoOn)} style={{
-                background:pomoOn?"linear-gradient(135deg,#ef4444,#dc2626)":pomoBreak?"linear-gradient(135deg,#34d399,#059669)":"linear-gradient(135deg,#8b5cf6,#7c3aed)",
-                padding:"12px 32px",fontSize:14}}>
-                {pomoOn?"⏸ Pause":pomoBreak?"▶ Lancer pause":"▶ Focus"}
-              </button>
-              <button className="btn-ghost" onClick={()=>{setPomoOn(false);setPomoBreak(false);setPomoTime(POMO_WORK);}} style={{padding:"12px 16px"}}>↻ Reset</button>
-            </div>
-            <div style={{marginTop:30}}>
-              <div style={{fontSize:12,color:"#555",marginBottom:12}}>Sessions du jour : {sToday(pomoSessions)} 🍅</div>
-              <div style={{display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap"}}>
-                {pomoSessions.filter(s=>isToday(s.ts)).map(s=>(
-                  <div key={s.id} style={{width:28,height:28,borderRadius:8,background:"rgba(239,68,68,0.15)",border:"1px solid rgba(239,68,68,0.2)",
-                    display:"flex",alignItems:"center",justifyContent:"center",fontSize:14}}>🍅</div>
-                ))}
-                {sToday(pomoSessions)===0 && <div style={{fontSize:12,color:"#333"}}>Aucune session encore</div>}
-              </div>
-            </div>
-            <div className="card" style={{marginTop:24,padding:16,textAlign:"left"}}>
-              <div style={{fontSize:11,color:"#666",marginBottom:8}}>Comment ça marche</div>
-              <div style={{fontSize:12,color:"#444",lineHeight:1.8}}>
-                🍅 25 min de focus intense → 5 min de pause<br/>
-                🔔 Notification à chaque transition<br/>
-                📊 Chaque session compte dans tes stats
-              </div>
-            </div>
-          </div>
-        )}
+        </div>}
       </div>
 
-      {/* BOTTOM NAV */}
+      {/* Nav */}
       <div className="bottom-nav">
-        {tabs.map(t=>(
-          <button key={t.key} className={`tab ${tab===t.key?"active":""}`} onClick={()=>setTab(t.key)}>
-            <span className="tab-icon">{t.icon}</span>{t.label}
-          </button>
-        ))}
+        {tabs.map(t=><button key={t.key} className={`tab ${tab===t.key?"active":""}`} onClick={()=>setTab(t.key)}>
+          <span className="tab-icon">{t.icon}</span>{t.label}
+          {t.key==="archive"&&archive.length>0&&<span style={{fontSize:8,color:"#888"}}>({archive.length})</span>}
+        </button>)}
       </div>
 
-      {toast && <div className="toast">{toast}</div>}
+      {/* Edit Modal */}
+      {editItem&&<div className="modal-overlay" onClick={()=>setEditItem(null)}><div className="modal" onClick={e=>e.stopPropagation()}>
+        <h3>✏️ Modifier</h3>
+        <textarea className="input" value={editText} onChange={e=>setEditText(e.target.value)} rows={3} style={{marginBottom:12}}/>
+        <div style={{fontSize:11,color:"#888",marginBottom:6}}>Quadrant :</div>
+        <QS value={editQuad} onChange={setEditQuad}/>
+        {editItem._source==="journal"&&<div style={{marginTop:12}}>
+          <div style={{fontSize:11,color:"#888",marginBottom:6}}>Catégorie :</div>
+          <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>{JCATS.map(c=><button key={c} className="btn-ghost" onClick={()=>setEditCat(c)} style={{borderColor:editCat===c?"#60a5fa":"rgba(255,255,255,0.08)",color:editCat===c?"#60a5fa":"#666",fontSize:10,padding:"4px 8px"}}>{c}</button>)}</div>
+        </div>}
+        <div style={{display:"flex",gap:8,marginTop:16}}>
+          <button className="btn" onClick={saveEdit}>💾 Sauver</button>
+          <button className="btn-ghost" onClick={()=>setEditItem(null)}>Annuler</button>
+        </div>
+      </div></div>}
+
+      {/* Confirm Modal */}
+      {confirmAction&&<div className="modal-overlay" onClick={()=>setConfirmAction(null)}><div className="modal" onClick={e=>e.stopPropagation()}>
+        <h3>⚠️ Confirmation</h3>
+        <p style={{fontSize:14,color:"#ccc",marginBottom:20,lineHeight:1.6}}>{confirmAction.msg}</p>
+        <div style={{display:"flex",gap:8}}>
+          <button className="btn btn-danger" onClick={confirmAction.onConfirm}>Oui, supprimer</button>
+          <button className="btn-ghost" onClick={()=>setConfirmAction(null)}>Annuler</button>
+        </div>
+      </div></div>}
+
+      {toast&&<div className="toast">{toast}</div>}
     </>
   );
 }
-
-ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+ReactDOM.createRoot(document.getElementById("app")).render(<App/>);
 </script>
-
-<!-- Service Worker Registration -->
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
-</script>
+<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});</script>
 </body>
 </html>
