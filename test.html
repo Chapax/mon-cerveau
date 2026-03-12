@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Test Mon Cerveau</title>
+<style>
+body{background:#0a0a0f;color:#fff;font-family:sans-serif;text-align:center;padding:40px 20px}
+h1{font-size:24px}
+p{color:#888;margin-top:20px}
+button{background:#8b5cf6;color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:16px;margin-top:20px;cursor:pointer}
+#log{color:#34d399;margin-top:20px;font-size:12px;text-align:left;white-space:pre-wrap}
+</style>
+</head>
+<body>
+
+<h1>🧠 Test v2</h1>
+<p>Si tu vois cette page, le HTML fonctionne.</p>
+<button onclick="testJS()">Tester JavaScript</button>
+<div id="log"></div>
+
+<script>
+// Unregister old service workers
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    for(var i=0;i<regs.length;i++){
+      regs[i].unregister();
+      document.getElementById('log').textContent+='SW supprime: '+regs[i].scope+'\n';
+    }
+    if(regs.length===0){
+      document.getElementById('log').textContent+='Aucun SW trouve\n';
+    }
+  });
+}
+
+function testJS(){
+  var log=document.getElementById('log');
+  log.textContent+='JS fonctionne OK\n';
+  log.textContent+='Navigator: '+navigator.userAgent+'\n';
+  log.textContent+='localStorage: '+(typeof localStorage!=='undefined'?'OK':'NON')+'\n';
+  
+  // Test React load
+  var s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js';
+  s.onload=function(){log.textContent+='React charge: OK\n'};
+  s.onerror=function(){log.textContent+='React charge: ERREUR\n'};
+  document.body.appendChild(s);
+}
+</script>
+</body>
+</html>
